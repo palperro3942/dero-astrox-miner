@@ -55,9 +55,9 @@ An explicit `-t` value above the available logical CPU count exits with `invalid
 
 The normal work line remains compact and shows the active endpoint, difficulty, height, total hashrate, accepted, rejected, and stale counts. Detailed reports are printed only when requested with a hotkey.
 
-## Transparent 10% Dev Fee
+## Transparent 2% Dev Fee
 
-The official 1.0.0 build has a mandatory, visible `10%` development fee. The first 10 minutes of each monotonic 100-minute cycle mine to the development wallet; the following 90 minutes mine to the user wallet. Only active mining time advances this cycle: pressing `p` freezes the donation clock until mining is resumed. This release does not expose an option to change or disable it.
+The previously planned ~~10%~~ rate has been replaced by a mandatory, visible `2%` development fee. The first 2 minutes of each monotonic 100-minute cycle mine to the development wallet; the following 98 minutes mine to the user wallet. Only active mining time advances this cycle: pressing `p` freezes the donation clock until mining is resumed. This release does not expose an option to change or disable it.
 
 Development wallet:
 
