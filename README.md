@@ -1,88 +1,79 @@
-# DERO AstroX Miner
+# DERO AstroX Miner 1.1.0
 
-Dominating the competition. A fast, transparent DERO AstroBWTv3 CPU miner for Windows x64. This release ships with its optimized algorithm configuration built in, so normal users do not need tuning flags or profiles.
+![AstroX](logo/astrox.png)
+
+Dominating the competition. A fast, transparent DERO AstroBWTv3 CPU miner for Windows x64. The optimized SA7 recipe is built into this production binary.
 
 ## Quick Start
 
-For unattended restarts, edit `rpc_mine.bat` and set your wallet, node or pool URL, password, and thread count. The template refuses to start until a wallet is explicitly configured.
-
-Or use the guided launcher:
-
-Double-click `START_ASTROX.bat` for a guided start. It asks for:
-
-- primary node or pool URL
-- your DERO wallet
-- pool password (`x` is the usual default)
-- thread count (up to `22`, limited by the CPU)
-- optional backup URL
-
-The launcher does not save credentials or settings. It displays the selected configuration and asks for confirmation before mining starts.
-
-You can also start the miner directly:
+Double-click `START_ASTROX.bat` for a guided setup, or run:
 
 ```powershell
-.\dero-astrox-miner.exe -o 127.0.0.1:10100 -u dero1... -p x -t 22
+.\dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0
 ```
 
-With a backup endpoint:
+Through a SOCKS5 proxy:
 
 ```powershell
-.\dero-astrox-miner.exe -o primary-node:10100 -B backup-node:10100 -u dero1... -p x -t 22
+.\dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0 --proxy socks5://127.0.0.1:1080
 ```
 
-## Command Line
+To report real hashrate to a Hansen33 Mod daemon:
+
+```powershell
+.\dero-astrox-miner.exe -o wss://node.example:10100 --wallet YOUR_WALLET.rig-name --cpu-threads 0 --report-realtime-hashrate
+```
+
+`--cpu-threads 0` selects an automatic thread count capped at 22. A positive value must not exceed the CPU's available logical threads.
+
+## Options
 
 | Option | Description |
 | --- | --- |
-| `-o <url>` | Primary DERO daemon or `stratum+tcp://` / `stratum+ssl://` pool |
-| `-u <wallet>` | Your mining wallet; required |
-| `-p <password>` | Pool password; defaults to `x` |
-| `-t <threads>` | Mining threads; defaults to up to `22`, limited by the CPU's logical threads |
+| `-o <url>` | Primary daemon, `stratum+tcp://`, or `stratum+ssl://` endpoint |
+| `-u`, `--wallet <wallet>` | User mining wallet; required |
+| `-p`, `--password <password>` | Pool password; default `x` |
+| `-t`, `--cpu-threads <count>` | Threads; `0` selects automatic mode |
 | `-B <url>` | Optional backup endpoint of the same protocol type |
+| `--proxy socks5://host:port` | Route daemon or Stratum traffic through SOCKS5 |
+| `--report-realtime-hashrate` | Opt in to real H/s reports when a daemon advertises Hansen33 Mod |
+| `--miner-tag <name>`, `--tag <name>` | Optional Hansen33 miner tag; defaults to `.rigname` |
 | `-V` | Print version and exit |
 | `-h` | Print help and exit |
-| `--show-donation` | Print the donation schedule and exit |
+| `--show-donation` | Print the fixed donation schedule and exit |
 
-With no arguments, the executable only prints help. Mining never starts without explicit `-o` and `-u` values.
-An explicit `-t` value above the available logical CPU count exits with `invalid CPU threads` before connecting.
+The long SRBMiner aliases above can be used in existing launch commands. Other unsupported options are reported as warnings and ignored, so harmless SRBMiner-specific switches do not abort startup. Required endpoint and wallet checks are never ignored.
+
+SOCKS5 uses no proxy authentication and sends the destination hostname through the tunnel for remote DNS resolution. The same proxy is used for a configured backup endpoint. Use only a proxy you trust and are authorized to access.
+
+Tor exposes SOCKS5 locally, commonly at `socks5://127.0.0.1:9050` for Tor Service or `socks5://127.0.0.1:9150` for Tor Browser. Remote DNS also permits a configured `.onion` endpoint. Tor latency and exit policies may reduce mining reliability.
+
+Hansen33 reporting is disabled by default and is available only for daemon WebSocket mining. When explicitly enabled, AstroX waits for `hansen33_mod=true` from the daemon, then sends `wallet_address`, `miner_tag`, and the measured real hashrate every 10 seconds. The AstroMiner-compatible alias `-report-realtime-hashrate` is also accepted. Nothing is reported to official daemons, ordinary pools, or Stratum servers that do not advertise this extension.
+
+With no arguments the binary only prints help. It never starts mining without an explicit endpoint and user wallet.
+
+For pools that identify workers as `wallet.rigname`, pass the complete value to `-u` or `--wallet`. AstroX preserves the same `.rigname` suffix for both targets: `DEV_WALLET.rigname` during DEV and `USER_WALLET.rigname` during USER. The user's wallet dashboard is still expected to show that worker only after the first USER transition, plus any dashboard refresh delay.
 
 ## Keyboard Controls
 
 - `p`: pause or resume mining
-- `h`: show aggregate hashrate and hashrate for every thread
-- `c`: show current connection details
-- `r`: show the top 10 efforts for accepted miniblocks; it stays silent until one is accepted
-
-The normal work line remains compact and shows the active endpoint, difficulty, height, total hashrate, accepted, rejected, and stale counts. Detailed reports are printed only when requested with a hotkey.
+- `h`: show aggregate and per-thread hashrate
+- `c`: show connection details
+- `r`: show the top 10 accepted-miniblock efforts
 
 ## Transparent 2% Dev Fee
 
-The previously planned ~~10%~~ rate has been replaced by a mandatory, visible `2%` development fee. The first 2 minutes of each monotonic 100-minute cycle mine to the development wallet; the following 98 minutes mine to the user wallet. Only active mining time advances this cycle: pressing `p` freezes the donation clock until mining is resumed. This release does not expose an option to change or disable it.
+This release has a mandatory, visible 2% development fee. The first 2 minutes of each monotonic 100-minute active-mining cycle use the development wallet, followed by 98 minutes using the user wallet. Pausing freezes the schedule. A wallet transition drains queued/in-flight work, gives unacknowledged submissions a bounded response grace, and then reconnects for a fresh job without freeing TLS state from the reader thread.
 
-Development wallet:
+The fee cannot be changed in the production binary. Its percentage and schedule are shown at startup and by `--show-donation`.
 
-```text
-dero1qype0r5uv28n4v0z9ejfsuk4umu65c6tlv2phd4rdj9h4rh6vt6psqqx7a6es
-```
+## Checksums
 
-The startup banner shows the percentage and schedule without printing the development wallet. `--show-donation` provides the full transparent schedule. A wallet transition waits until workers are between hashes and there are no queued, in-flight, or pending shares. It then requests a fresh job through the normal scheduler generation path.
-
-## Binary and Checksums
-
-The release executable is a stripped PE32+ AMD64 binary statically linked with its non-system runtime libraries. It only imports Windows system DLLs. It does not install a service, add persistence, hide itself, auto-start, or download executables.
-
-Verify the downloaded binary in PowerShell:
+The Windows executable is stripped and statically linked with its non-system runtime libraries. It does not install a service, add persistence, hide itself, auto-start, or download executables.
 
 ```powershell
 Get-FileHash .\dero-astrox-miner.exe -Algorithm SHA256
 Get-Content .\dero-astrox-miner.exe.sha256
 ```
 
-The release also includes `SHA256SUMS.txt` and a `.sha256` sidecar for the ZIP archive. Always compare checksums with the values published alongside the GitHub release.
-
-Building a highly optimized miner is an extremely complicated and time-consuming task. Please consider making a donation or leaving a star if this project is useful to you.
-
-```text
-BTC: bc1qhf0lqm06d7qdltfnxuy6c6p49nr7wt2fm43vfw
-DERO: dero1qype0r5uv28n4v0z9ejfsuk4umu65c6tlv2phd4rdj9h4rh6vt6psqqx7a6es
-```
+Compare the result with the checksum published alongside the release.
