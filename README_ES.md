@@ -1,13 +1,17 @@
-# DERO AstroX Miner 1.1.0
+# DERO AstroX Miner
 
-![AstroX](logo/astrox.png)
+![AstroX](AstroX-logo.svg)
 
 Dominando a la competencia. Minero CPU transparente y optimizado para DERO AstroBWTv3 en Windows x64. La receta SA7 validada viene integrada en el binario de produccion.
 
 ## Inicio rapido
 
-Ejecuta `START_ASTROX.bat` para una configuracion guiada, o usa:
+Descarga el binario ma reciente y ejecuta `START_ASTROX.bat` para una configuracion guiada, o usa:
 
+```powershell
+.dero-astrox-miner.exe -o NODE_URL:PORT -w YOUR_WALLET -t 0
+```
+o
 ```powershell
 .\dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0
 ```
@@ -61,9 +65,9 @@ En pools que identifican workers como `wallet.rigname`, entrega el valor complet
 - `c`: detalles de conexion
 - `r`: top 10 de esfuerzos de miniblocks aceptados
 
-## Dev fee transparente de 2%
+## Dev fee transparente de 3%
 
-La version tiene una comision obligatoria y visible de 2%. Los primeros 2 minutos de cada ciclo monotono de 100 minutos de mineria activa usan la wallet de desarrollo; los 98 minutos siguientes usan la wallet del usuario. Pausar congela el reloj. El cambio de wallet drena el trabajo en cola/en vuelo, concede una espera acotada a envios sin ACK y reconecta para solicitar trabajo nuevo sin liberar TLS desde el hilo lector.
+La version tiene una comision obligatoria y visible de 3%. Los primeros 3 minutos de cada ciclo monotono de 100 minutos de mineria activa usan la wallet de desarrollo; los 97 minutos siguientes usan la wallet del usuario. Pausar congela el reloj. El cambio de wallet drena el trabajo en cola/en vuelo, concede una espera acotada a envios sin ACK y reconecta para solicitar trabajo nuevo sin liberar TLS desde el hilo lector.
 
 La comision no se puede modificar en el binario de produccion. El porcentaje y calendario aparecen al iniciar y con `--show-donation`.
 

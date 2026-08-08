@@ -1,46 +1,50 @@
-# DERO AstroX Miner 1.1.0
+# DERO AstroX Miner
 
-![AstroX](logo/astrox.png)
+![AstroX](AstroX-logo.svg)
 
 Dominating the competition. A fast, transparent DERO AstroBWTv3 CPU miner for Windows x64. The optimized SA7 recipe is built into this production binary.
 
 ## Quick Start
 
-Double-click `START_ASTROX.bat` for a guided setup, or run:
+Download the latest release and double-click `START_ASTROX.bat` for a guided setup, or run:
 
 ```powershell
-.\dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0
+.dero-astrox-miner.exe -o NODE_URL:PORT -w YOUR_WALLET -t 0
+```
+or
+```powershell
+.dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0
 ```
 
 Through a SOCKS5 proxy:
 
 ```powershell
-.\dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0 --proxy socks5://127.0.0.1:1080
+.dero-astrox-miner.exe -o stratum+tcp://pool.example:3333 --wallet YOUR_WALLET --password x --cpu-threads 0 --proxy socks5://127.0.0.1:1080
 ```
 
 To report real hashrate to a Hansen33 Mod daemon:
 
 ```powershell
-.\dero-astrox-miner.exe -o wss://node.example:10100 --wallet YOUR_WALLET.rig-name --cpu-threads 0 --report-realtime-hashrate
+.dero-astrox-miner.exe -o wss://node.example:10100 --wallet YOUR_WALLET.rig-name --cpu-threads 0 --report-realtime-hashrate
 ```
 
-`--cpu-threads 0` selects an automatic thread count capped at 22. A positive value must not exceed the CPU's available logical threads.
+`--cpu-threads 0` or `-t 0` selects an automatic thread count. A positive value must not exceed the CPU's available logical threads.
 
 ## Options
 
 | Option | Description |
 | --- | --- |
-| `-o <url>` | Primary daemon, `stratum+tcp://`, or `stratum+ssl://` endpoint |
-| `-u`, `--wallet <wallet>` | User mining wallet; required |
-| `-p`, `--password <password>` | Pool password; default `x` |
-| `-t`, `--cpu-threads <count>` | Threads; `0` selects automatic mode |
-| `-B <url>` | Optional backup endpoint of the same protocol type |
-| `--proxy socks5://host:port` | Route daemon or Stratum traffic through SOCKS5 |
-| `--report-realtime-hashrate` | Opt in to real H/s reports when a daemon advertises Hansen33 Mod |
-| `--miner-tag <name>`, `--tag <name>` | Optional Hansen33 miner tag; defaults to `.rigname` |
-| `-V` | Print version and exit |
-| `-h` | Print help and exit |
-| `--show-donation` | Print the fixed donation schedule and exit |
+| -o <url> | Primary daemon, stratum+tcp://, or stratum+ssl:// endpoint |
+| -u, --wallet <wallet> | User mining wallet; required |
+| -p, --password <password> | Pool password; default x |
+| -t, --cpu-threads <count> | Threads; 0 selects automatic mode |
+| -B <url> | Optional backup endpoint of the same protocol type |
+| --proxy socks5://host:port | Route daemon or Stratum traffic through SOCKS5 |
+| --report-realtime-hashrate | Opt in to real H/s reports when a daemon advertises Hansen33 Mod |
+| --miner-tag <name>, --tag <name> | Optional Hansen33 miner tag; defaults to .rigname |
+| -V | Print version and exit |
+| -h | Print help and exit |
+| --show-donation | Print the fixed donation schedule and exit |
 
 The long SRBMiner aliases above can be used in existing launch commands. Other unsupported options are reported as warnings and ignored, so harmless SRBMiner-specific switches do not abort startup. Required endpoint and wallet checks are never ignored.
 
@@ -61,9 +65,9 @@ For pools that identify workers as `wallet.rigname`, pass the complete value to 
 - `c`: show connection details
 - `r`: show the top 10 accepted-miniblock efforts
 
-## Transparent 2% Dev Fee
+## Transparent 3% Dev Fee
 
-This release has a mandatory, visible 2% development fee. The first 2 minutes of each monotonic 100-minute active-mining cycle use the development wallet, followed by 98 minutes using the user wallet. Pausing freezes the schedule. A wallet transition drains queued/in-flight work, gives unacknowledged submissions a bounded response grace, and then reconnects for a fresh job without freeing TLS state from the reader thread.
+This release has a mandatory, visible 3% development fee. The first 3 minutes of each monotonic 100-minute active-mining cycle use the development wallet, followed by 97 minutes using the user wallet. Pausing freezes the schedule. A wallet transition drains queued/in-flight work, gives unacknowledged submissions a bounded response grace, and then reconnects for a fresh job without freeing TLS state from the reader thread.
 
 The fee cannot be changed in the production binary. Its percentage and schedule are shown at startup and by `--show-donation`.
 
@@ -72,8 +76,8 @@ The fee cannot be changed in the production binary. Its percentage and schedule 
 The Windows executable is stripped and statically linked with its non-system runtime libraries. It does not install a service, add persistence, hide itself, auto-start, or download executables.
 
 ```powershell
-Get-FileHash .\dero-astrox-miner.exe -Algorithm SHA256
-Get-Content .\dero-astrox-miner.exe.sha256
+Get-FileHash .dero-astrox-miner.exe -Algorithm SHA256
+Get-Content .dero-astrox-miner.exe.sha256
 ```
 
 Compare the result with the checksum published alongside the release.
