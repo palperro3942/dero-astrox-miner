@@ -2,7 +2,7 @@
 
 ![AstroX](AstroX-logo.svg)
 
-New Recipeee!!!, Experimental new SA8 Kernel
+#New Recipeee!!!, Experimental new SA8 Kernel
 Dominating the competition. A fast, transparent DERO AstroBWTv3 CPU miner for Windows x64. The optimized SA7 recipe is built into this production binary.
 
 ## Quick Start
